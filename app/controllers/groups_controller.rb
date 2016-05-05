@@ -25,6 +25,7 @@ class GroupsController < ApplicationController
   def show
     # show 會顯示 html 畫面，所以將指定的 group 抓出來，讓 html 使用
     @group = Group.find(params[:id])
+    @posts = @group.posts
   end
 
   # 修改討論版的頁面
@@ -44,6 +45,12 @@ class GroupsController < ApplicationController
       render :edit
     end
   end 
+
+  def destroy
+    @group = Group.find(params[:id])
+    @group.destroy
+    redirect_to groups_path, alert: "討論版已刪除"
+  end
 
   private
 
