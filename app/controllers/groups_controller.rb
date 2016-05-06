@@ -1,5 +1,7 @@
 class GroupsController < ApplicationController
 
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+
   # 列出所有 group 的頁面
   def index
     @groups = Group.all
@@ -12,7 +14,7 @@ class GroupsController < ApplicationController
 
   # 在新增討論版 按下 Submit 的反應
   def create
-    @group = Group.new(group_params)
+    @group = current_user.groups.new(group_params)
 
     if @group.save
       redirect_to groups_path
@@ -31,12 +33,12 @@ class GroupsController < ApplicationController
   # 修改討論版的頁面
   def edit
     # edit 會顯示 html 畫面，所以將指定的 group 抓出來，讓 html 使用即可
-    @group = Group.find(params[:id])
+    @group = current_user.groups.find(params[:id])
   end
 
   # 修改討論版 按下 Submit 後的反應（怪的是 rake routes 顯示應該用 put method 才對，但實際看 html code，發現是用 post method）
   def update
-    @group = Group.find(params[:id])
+    @group = current_user.groups.find(params[:id])
 
     # update 沒有 html 的畫面，所以底下還需要做其它事
     if @group.update(group_params)
@@ -47,7 +49,7 @@ class GroupsController < ApplicationController
   end 
 
   def destroy
-    @group = Group.find(params[:id])
+    @group = current_user.groups.find(params[:id])
     @group.destroy
     redirect_to groups_path, alert: "討論版已刪除"
   end
